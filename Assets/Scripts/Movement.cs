@@ -10,16 +10,22 @@ using UnityEngine.Tilemaps;
 public class PlayerMovement : MonoBehaviour
 {
     public float moveSpeed = 4f;
-    private bool canMove = true;
+    public int roomsWidth = 4;//4 is default
+    public bool canMove = true;
     private Rigidbody2D rb;
     private Vector2 movement;
-    private Animator anim;
+    public Animator anim;
     private SpriteRenderer sr;
+    public int currentRoom;
 
     private Vector3 moveDir;
     private Vector2 faceDir;
 
-    private byte swordIndex=1;
+    [Header("Knockback")]
+    public float knockbackForce = 6f;
+    public float knockbackDuration = 0.15f;
+
+    private bool isKnockedBack = false;
 
     void Awake()
     {
@@ -27,6 +33,10 @@ public class PlayerMovement : MonoBehaviour
         sr = base.transform.GetComponent<SpriteRenderer>();
         anim = base.transform.GetComponent<Animator>();
         anim.runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("miniplayer");
+        if(GetDirection().x==0 && GetDirection().y == 0)
+        {
+            ChangeDirection(Vector2.down);
+        }
     }
 
     void Update()
@@ -35,10 +45,6 @@ public class PlayerMovement : MonoBehaviour
         {
             float moveX = UTInput.GetAxisRaw("Horizontal");
             float moveY = UTInput.GetAxisRaw("Vertical");
-            if (UTInput.GetButtonDown("Z"))
-            {
-                Attack();
-            }
             if (Moved())
             {
                 anim.SetFloat("speed", 1);
@@ -96,7 +102,24 @@ public class PlayerMovement : MonoBehaviour
     public void MoveToTheOtherRoom(Vector2 v)
     {
         canMove = false;
+        movement = Vector2.zero;
+        currentRoom += (int)v.x;
+        currentRoom +=(int)v.y*roomsWidth;
+        EnemyMovement[] t = FindObjectsOfType<EnemyMovement>();
+        foreach(EnemyMovement a in t)
+        {
+            a.OnPlayerExitRoom();
+        }
+        foreach (EnemyMovement a in t)
+        {
+            if (a.GetRoom() == GetCurrentRoom())
+                a.ResetEnemy();
+        }
         StartCoroutine(MoveAFewPixels(v, 0.8f));
+    }
+    public int GetCurrentRoom()
+    {
+        return currentRoom;
     }
     public IEnumerator MoveAFewPixels(Vector2 v, float duration)
     {
@@ -123,49 +146,58 @@ public class PlayerMovement : MonoBehaviour
     {
         canMove = true;
     }
-    public void Attack()
-    {
-        canMove = false;
-        string dir="up";
-        if(faceDir.x==-1)
-                dir = "left";
-        else if(faceDir.x==1)
-                dir = "right";
-        else if(faceDir.y==-1)
-                dir = "down";
-        else
-            dir = "up";
-        this.GetComponent<AudioSource>().clip = Resources.Load<AudioClip>("Sound_effects/snd_sword"+(swordIndex).ToString());
-        this.GetComponent<AudioSource>().Play();
-        swordIndex++;
-        if (swordIndex > 3)
-            swordIndex = 1;
-        anim.Play("attack_" + dir);
-        StartCoroutine(AttackDelay());
-    }
-    public IEnumerator AttackDelay()
+    public void MovementToZero()
     {
         movement = Vector2.zero;
-        float t = 0;
-        while (t < 1)
+    }
+    public Vector2 GetFaceDirection()
+    {
+        return faceDir;
+    }
+    public void ApplyKnockback(Vector2 sourcePosition)
+    {
+        if (!gameObject.activeInHierarchy || isKnockedBack)
+            return;
+
+        StartCoroutine(KnockbackRoutine(sourcePosition));
+    }
+    IEnumerator KnockbackRoutine(Vector2 sourcePosition)
+    {
+        isKnockedBack = true;
+        canMove = false;
+
+        anim.SetBool("isMoving", false);
+
+        Vector2 dir = ((Vector2)transform.position - sourcePosition).normalized;
+
+        float timer = 0f;
+
+        while (timer < knockbackDuration)
         {
-            t += Time.deltaTime;
+            rb.velocity = dir * knockbackForce;
+
+            timer += Time.deltaTime;
             yield return null;
         }
+
+        rb.velocity = Vector2.zero;
+        movement = Vector2.zero;
+
         canMove = true;
-        yield return null;
+        isKnockedBack = false;
     }
     void FixedUpdate()
     {
-        //if (canMove)
+        if (!isKnockedBack)
         {
             rb.velocity = movement * moveSpeed;
-            float pixelsPerUnit = 16f;
-
-            Vector3 pos = transform.position;
-            pos.x = Mathf.Round(pos.x * pixelsPerUnit) / pixelsPerUnit;
-            pos.y = Mathf.Round(pos.y * pixelsPerUnit) / pixelsPerUnit;
-            transform.position = pos;
         }
+
+        float pixelsPerUnit = 16f;
+
+        Vector3 pos = transform.position;
+        pos.x = Mathf.Round(pos.x * pixelsPerUnit) / pixelsPerUnit;
+        pos.y = Mathf.Round(pos.y * pixelsPerUnit) / pixelsPerUnit;
+        transform.position = pos;
     }
 }

@@ -11,5 +11,8 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Minigame/Minigame.unity
     guid: 9fc0d4010bbf28b4594072e72b8655ab
+  - enabled: 1
+    path: Assets/Scenes/Minigame/Death.unity
+    guid: d3adb6060a52c784481c39400e46e663
   m_configObjects: {}
   m_UseUCBPForAssetBundles: 0

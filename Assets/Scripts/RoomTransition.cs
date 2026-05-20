@@ -46,7 +46,11 @@ public class RoomTransition : MonoBehaviour
 
         // Re-enable control
         player.enabled = true;
-
+        HealItem[] t = FindObjectsOfType<HealItem>();
+        foreach (HealItem a in t)
+        {
+            a.DestroyOnExit();
+        }
         triggered = false;
         player.Reenable();
         inUse = false;

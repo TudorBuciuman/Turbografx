@@ -21,7 +21,7 @@ public class UTInput : MonoBehaviour
 
     private static bool cHold = false;
 
-    public static bool joystickIsActive=true;
+    public static bool joystickIsActive=false;
     private static bool frameButtonPress = false;
     private static bool zact = false, xact = false, cact = false;
 
@@ -58,6 +58,10 @@ public class UTInput : MonoBehaviour
    // {
    //     joystickIsActive = true;
    // }
+    public static void Android()
+    {
+        joystickIsActive = true;
+    }
 
     private void LateUpdate()
     {
@@ -244,7 +248,6 @@ public class UTInput : MonoBehaviour
 
     public static bool GetButton(string button)
     {
-        Debug.Log(joystickIsActive);
         if (!Application.isFocused)
         {
             return false;

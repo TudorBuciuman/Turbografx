@@ -4,10 +4,22 @@ using UnityEngine;
 
 public class Menu : MonoBehaviour
 {
+    public static bool mobile = false;
+    private void Awake()
+    {
+#if UNITY_ANDROID
+    mobile=true;
+#endif
+    }
     private void Start()
     {
-        Instantiate(Resources.Load<GameObject>("ui/MobileUI"));
-        FindFirstObjectByType<MobileUI>().EnableButtons(dPadEnabled: true, z: true, x: true, c: true, instant: false);
+        GameManager.gm.PlaySong("Music/Idioteque");
+        if (mobile)
+        {
+            Instantiate(Resources.Load<GameObject>("ui/MobileUI"));
+            FindFirstObjectByType<MobileUI>().EnableButtons(dPadEnabled: true, z: true, x: true, c: true, instant: false);
+            UTInput.Android();
+        }
     }
     private void Update()
     {
