@@ -48,6 +48,7 @@ public class Enemy : MonoBehaviour
     }
     public void ApplyKnockback(Vector2 direction, float force, float duration)
     {
+        if(GetComponent<EnemyMovement>().DefaultState!=EnemyMovement.State.Idle) 
         StartCoroutine(KnockbackCoroutine(direction, force, duration));
     }
 
@@ -59,7 +60,7 @@ public class Enemy : MonoBehaviour
 
         while (timer < duration)
         {
-            rb.velocity = direction * force; // or rb.velocity depending on Unity version
+            rb.velocity = direction * force; 
             timer += Time.deltaTime;
             yield return null;
         }

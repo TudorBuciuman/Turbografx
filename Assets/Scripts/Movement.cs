@@ -27,6 +27,8 @@ public class PlayerMovement : MonoBehaviour
 
     private bool isKnockedBack = false;
 
+    public static PlayerMovement instance;
+
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -38,6 +40,16 @@ public class PlayerMovement : MonoBehaviour
             ChangeDirection(Vector2.down);
         }
     }
+    private void Start()
+    {
+        if (instance == null)
+        {
+            instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+            Destroy(gameObject);
+    }
 
     void Update()
     {
@@ -45,11 +57,20 @@ public class PlayerMovement : MonoBehaviour
         {
             float moveX = UTInput.GetAxisRaw("Horizontal");
             float moveY = UTInput.GetAxisRaw("Vertical");
+
             if (Moved())
             {
-                anim.SetFloat("speed", 1);
-                anim.SetBool("isMoving", value: true);
-                moveDir = new Vector3(UTInput.GetAxisRaw("Horizontal"), UTInput.GetAxisRaw("Vertical"));
+                if (rb.velocity.sqrMagnitude > 0.1f)
+                {
+                    anim.SetFloat("speed", 1);
+                    anim.SetBool("isMoving", true);
+                }
+                else
+                {
+                    anim.SetBool("isMoving", false);
+                }
+
+                moveDir = new Vector3(moveX, moveY);
                 if (moveDir != Vector3.zero)
                 {
                     if (new List<Vector2> { Vector2.up, Vector2.left, Vector2.down, Vector2.right }.Contains(moveDir))
@@ -65,8 +86,9 @@ public class PlayerMovement : MonoBehaviour
             }
             else
             {
-                anim.SetBool("isMoving", value: false);
+                anim.SetBool("isMoving", false);
             }
+
             movement = Vector2.Lerp(movement, new Vector2(moveX, moveY), 0.2f);
         }
     }
@@ -105,7 +127,7 @@ public class PlayerMovement : MonoBehaviour
         movement = Vector2.zero;
         currentRoom += (int)v.x;
         currentRoom +=(int)v.y*roomsWidth;
-        EnemyMovement[] t = FindObjectsOfType<EnemyMovement>();
+        EnemyMovement[] t = FindObjectsByType<EnemyMovement>(FindObjectsSortMode.None);
         foreach(EnemyMovement a in t)
         {
             a.OnPlayerExitRoom();
@@ -130,11 +152,9 @@ public class PlayerMovement : MonoBehaviour
         canMove = false;
 
         float timer = 0f;
-        float speed = 4f;
 
         while (timer < duration)
         {
-            //transform.position += new Vector3(v.x, v.y, 0) * speed * Time.deltaTime;
             movement = Vector2.Lerp(movement, v, 0.2f);
             timer += Time.deltaTime;
             yield return null;
@@ -199,5 +219,10 @@ public class PlayerMovement : MonoBehaviour
         pos.x = Mathf.Round(pos.x * pixelsPerUnit) / pixelsPerUnit;
         pos.y = Mathf.Round(pos.y * pixelsPerUnit) / pixelsPerUnit;
         transform.position = pos;
+    }
+    public void HandleSpawn(Vector3 spawnPos, Vector2 spawnDir)
+    {
+        base.transform.position = spawnPos;
+        ChangeDirection(spawnDir);
     }
 }

@@ -87,6 +87,10 @@ public class PlayerStats : MonoBehaviour
         float f = (float)(playerHealth.GetHealth() / (r));
         HPSlider.value = f;
     }
+    public int GetMaxHealth()
+    {
+        return PlayerHealth.MaxHealth + level;
+    }
     public IEnumerator ShowStats()
     {
         float t = 0;
@@ -146,6 +150,7 @@ public class PlayerStats : MonoBehaviour
         if(level==4 && exp>= expToLevel[level])
         {
             level = 5;
+            higher = true;
         }
         if (higher)
         {
@@ -165,6 +170,13 @@ public class PlayerStats : MonoBehaviour
     }
     public bool CanBreakObjects()
     {
-        return level >= 4;
+        if (level >= 5)
+        {
+            AudioSource temp = this.AddComponent<AudioSource>();
+            temp.GetComponent<AudioSource>().loop = false;
+            temp.GetComponent<AudioSource>().clip = Resources.Load<AudioClip>("Sound_effects/snd_break_roots");
+            temp.GetComponent<AudioSource>().Play();
+        }
+        return level >= 5;
     }
 }

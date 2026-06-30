@@ -24,7 +24,6 @@ public class CRTGlitch : MonoBehaviour
     {
         crtMaterial.SetFloat("_ShakeTrigger", 1f);
 
-        // lasts just a few frames
         yield return new WaitForSeconds(0.08f);
 
         crtMaterial.SetFloat("_ShakeTrigger", 0f);

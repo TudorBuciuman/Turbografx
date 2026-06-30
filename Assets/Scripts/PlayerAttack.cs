@@ -5,7 +5,6 @@ using System.Collections;
 
 public class PlayerAttack : MonoBehaviour
 {
-    private float attackRange = 1f;
     private byte swordIndex = 1;
     public LayerMask enemyLayer;
 
@@ -96,6 +95,19 @@ public class PlayerAttack : MonoBehaviour
             if (b != null)
             {
                 b.TryBreak(stats);
+            }
+            ShadowMantleHolder s = hit.GetComponent<ShadowMantleHolder>();
+            if (s != null)
+            {
+                s.TakeDamage(stats.GetDamage());
+            }
+            ShadowMantleMinion m = hit.GetComponent<ShadowMantleMinion>();
+            if(m != null)
+            {
+                m.TakeDamage(stats.GetDamage());
+                Vector2 knockDir = (hit.transform.position - transform.position).normalized;
+                hit.GetComponent<ShadowMantleMinion>().ApplyKnockback(knockDir, 4f, 0.1f);
+                m.ApplyKnockback(knockDir, 4f, 0.1f);
             }
         }
     }

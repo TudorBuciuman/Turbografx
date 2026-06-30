@@ -6,7 +6,7 @@ public class TouchPad : MonoBehaviour
 {
     private Image reticle;
 
-    private bool followPointer;
+    private bool followPointer=false;
 
     private int sensitivity = 10;
 
@@ -19,13 +19,12 @@ public class TouchPad : MonoBehaviour
     private void Awake()
     {
         reticle = base.transform.parent.Find("Reticle").GetComponent<Image>();
-        sensitivity = PlayerPrefs.GetInt("DPADSensitivity", 10);
+        Input.multiTouchEnabled = true;
     }
 
     private void Update()
     {
         //curColor = Color.Lerp(curColor, newColor, 0.1f);
-
         if (trackedFingerId == -1)
         {
             for (int i = 0; i < Input.touchCount; i++)
@@ -39,7 +38,6 @@ public class TouchPad : MonoBehaviour
                 }
             }
         }
-
         if (trackedFingerId != -1)
         {
             bool found = false;
@@ -149,7 +147,9 @@ public class TouchPad : MonoBehaviour
     public void OnPointerEnter()
     {
         if (Input.touchCount == 0)
+        {
             followPointer = true;
+        }
     }
 
     public void OnPointerExit()

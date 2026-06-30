@@ -9,7 +9,7 @@ public class RoomTransition : MonoBehaviour
     [SerializeField]
     public float controlDelay = 0.5f;
     [SerializeField]
-    public float speed=8; //8 is the default, a little slow
+    public float speed=8; 
 
     private bool triggered = false;
 
@@ -31,22 +31,16 @@ public class RoomTransition : MonoBehaviour
     IEnumerator Transition(RoomCamera cam, PlayerMovement player)
     {
         inUse = true;
-        // Disable player control
-        //player.enabled = false;
-
-        // Move camera
         cam.MoveToRoom(direction,speed);
         player.MoveToTheOtherRoom(direction);
-        // Wait for camera to finish
+
         while (cam.IsMoving())
             yield return null;
 
-        // Small delay (Zelda feel)
         yield return new WaitForSeconds(controlDelay);
 
-        // Re-enable control
         player.enabled = true;
-        HealItem[] t = FindObjectsOfType<HealItem>();
+        HealItem[] t = FindObjectsByType<HealItem>(FindObjectsSortMode.None);
         foreach (HealItem a in t)
         {
             a.DestroyOnExit();

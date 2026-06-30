@@ -39,6 +39,10 @@ public class EnemyMovement : MonoBehaviour
         {
             MadEnemy();
         }
+        else if (animState == 2)
+        {
+            DarkEnemy();
+        }
     }
 
     void Update()
@@ -113,6 +117,10 @@ public class EnemyMovement : MonoBehaviour
     public void MadEnemy()
     {
         this.GetComponent<Animator>().Play("enemy2");
+    }
+    public void DarkEnemy()
+    {
+        this.GetComponent<Animator>().Play("enemy3");
     }
     void ReturnToStart()
     {
