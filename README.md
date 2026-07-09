@@ -1,6 +1,6 @@
 <p align="center">
   <picture>
-    <img src="https://img.itch.zone/aW1hZ2UvNDY3NzExNy8yNzg3MTIxNy5wbmc=/original/%2FIr%2Fgn.png" width="70%" draggable="false" />
+    <img src="https://img.itch.zone/aW1hZ2UvNDY3NzExNy8yNzg3MTIxNy5wbmc=/original/%2FIr%2Fgn.png" width="100%" draggable="false" />
   </picture>
 </p>
 
@@ -28,7 +28,7 @@
 
 <p align="center">
   <picture>
-    <img src="https://github.com/TudorBuciuman/Turbografx/blob/main/GitHub%20Art/Screenshot%202026-07-09%20212435.png?raw=true" width="70%" draggable="false" />
+    <img src="https://github.com/TudorBuciuman/Turbografx/blob/main/GitHub%20Art/Screenshot%202026-07-09%20212435.png?raw=true" width="100%" draggable="false" />
   </picture>
 </p>
 
