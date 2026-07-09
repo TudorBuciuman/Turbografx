@@ -8,7 +8,7 @@
 <p align="center">
   <em>Inspired by the 1989 TurboGrafx-16, the first 16bit graphics video-game console.</em><br/>
   <em>Ten days after the initial release of The Life of Pablo, Kanye West announced a new album called: TurboGrafx-16.</em><br/>
-  <em>Build as my own homage for the original console and it's incredible catalogue (and I LOVE the name). </em><br>
+  <em>Built as my own homage for the original console and it's incredible catalogue (and I LOVE the name). </em><br>
   <em>Also, this image was made by me using a picture of the original manual and the font used in trailers.</em><br/>
 </p>
 <br>
