@@ -29,22 +29,22 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _ColorBleed: 0.00535
+    - _ColorBleed: 0.00395
     - _ColorMask: 15
     - _ColorShift: 0.001
     - _Curvature: 0
-    - _Flicker: 0.081
-    - _Jitter: 0.00399
-    - _NoiseIntensity: 0.0682
+    - _Flicker: 0.09
+    - _Jitter: 0.00338
+    - _NoiseIntensity: 0.078
     - _ScanlineCount: 600
-    - _ScanlineIntensity: 0.596
+    - _ScanlineIntensity: 0.504
     - _Stencil: 0
     - _StencilComp: 8
     - _StencilOp: 0
     - _StencilReadMask: 255
     - _StencilWriteMask: 255
     - _UseUIAlphaClip: 0
-    - _Vignette: 1.27
+    - _Vignette: 0.44
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []

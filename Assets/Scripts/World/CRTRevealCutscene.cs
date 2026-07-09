@@ -1,5 +1,4 @@
 using System.Collections;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class CRTRevealCutscene : MonoBehaviour
@@ -7,6 +6,10 @@ public class CRTRevealCutscene : MonoBehaviour
     [Header("References")]
     [SerializeField] private Camera cutsceneCamera;
     [SerializeField] private Transform revealEndPoint;
+    [SerializeField] private GameObject bedCollider;
+    [SerializeField] private AudioSource noise;
+    [SerializeField] private AudioSource music;
+    [SerializeField] private AudioSource girlfriend;
 
     [Tooltip("Optional: player root / controller object to disable during the cutscene and re-enable afterward.")]
     [SerializeField] private GameObject playerRoot;
@@ -19,6 +22,7 @@ public class CRTRevealCutscene : MonoBehaviour
 
     [Tooltip("How long the zoom-out / reveal lasts.")]
     [SerializeField] private float revealDuration = 4f;
+    [SerializeField] private float playerMoveDuration = 2f;
 
     [Tooltip("Optional pause after the reveal completes, before handing control back.")]
     [SerializeField] private float endPause = 0.5f;
@@ -77,12 +81,19 @@ public class CRTRevealCutscene : MonoBehaviour
         while (elapsed < 25)
         {
             elapsed += Time.deltaTime;
-            //float t = Mathf.Clamp01(elapsed / revealDuration);
-
-            //float easedT = revealCurve != null ? revealCurve.Evaluate(t) : t;
             revealLight.range = Mathf.Lerp(90, 300, elapsed/25.0f);
             yield return null;
         }
+        yield return new WaitForSeconds(10);
+
+        elapsed = 0f;
+        while (elapsed < 25)
+        {
+            elapsed += Time.deltaTime;
+            revealLight.range = Mathf.Lerp(300, 140, elapsed / 25.0f);
+            yield return null;
+        }
+        yield return null;
     }
 
     private IEnumerator PlayCutsceneRoutine()
@@ -140,10 +151,27 @@ public class CRTRevealCutscene : MonoBehaviour
         if (endPause > 0f)
             yield return new WaitForSeconds(endPause);
 
-        if (playerAnimator != null && !string.IsNullOrWhiteSpace(standUpTrigger))
+        elapsed = 0f;
+        
+        Vector3 pos1 = playerRoot.transform.position;
+        Vector3 pos2 = playerRoot.transform.position + new Vector3(-27,0,0);
+
+        while (elapsed < playerMoveDuration)
         {
-            playerAnimator.SetTrigger(standUpTrigger);
+            elapsed += Time.deltaTime;
+
+            float t = elapsed / playerMoveDuration;
+            t = Mathf.SmoothStep(0f, 1f, t);   // ease-out curve
+
+            playerRoot.transform.position = Vector3.Lerp(pos1, pos2, t);
+            yield return null;
         }
+
+
+        if (endPause / 2 > 0f)
+            yield return new WaitForSeconds(endPause);
+
+        bedCollider.SetActive(true);
 
         OnCutsceneFinished();
     }
