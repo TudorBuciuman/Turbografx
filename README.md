@@ -58,3 +58,14 @@
 </p>
 
 ---
+
+<p align="center">
+  <strong>$\LARGE \color{#FFE412}{\textsf{3D ASSETS}}$</strong>
+</p>
+<p align="center">
+  <em>Things in life should be free, that's why I release everything for free.</em><br/>
+  <em>All the assets are hand-made my me in Blender.</em><br/>
+  <em>Here's the link to my SketchFab:</em><br/>
+  <em>https://sketchfab.com/tudor13mai/models</em><br/>
+  <em>Here you can find my custom TurboGrafx-16 console I made from scratch.</em><br/>
+</p>
