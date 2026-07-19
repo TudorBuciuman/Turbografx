@@ -5,13 +5,6 @@ using BITROOT.Inventory;
 
 namespace BITROOT.UI
 {
-    /// <summary>
-    /// One tile in the inventory grid. Expected hierarchy on the prefab:
-    ///   SlotRoot (this component + Image for the border/background)
-    ///     - Icon (Image, item sprite)
-    ///     - CountText (TMP_Text, bottom-right corner, hidden if count <= 1)
-    ///     - SelectionFrame (Image, toggled on hover/equip state)
-    /// </summary>
     [RequireComponent(typeof(Image))]
     public class InventorySlotUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
     {

@@ -129,7 +129,7 @@ public class EnemyMovement : MonoBehaviour
         if (Vector2.Distance(transform.position, startPosition) < 0.1f)
         {
             transform.position = startPosition;
-            currentState = State.Idle; //or Patrol, I dont even know anaymore....
+            currentState = State.Idle; //or Patrol, I dont even know anymore....
         }
     }
     void Chase()

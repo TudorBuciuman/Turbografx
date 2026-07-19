@@ -5,10 +5,6 @@ using BITROOT.Health;
 
 namespace BITROOT.Combat
 {
-    /// <summary>
-    /// Hitscan gun. Swap the raycast in Fire() for a projectile instantiate
-    /// if you want visible travel time on slower rounds.
-    /// </summary>
     public class Gun : WeaponBase
     {
         [SerializeField] private Transform muzzle;
@@ -17,7 +13,7 @@ namespace BITROOT.Combat
         public int ReserveAmmo { get; private set; }
         public bool IsReloading { get; private set; }
 
-        public event Action<int, int> OnAmmoChanged; // current, reserve
+        public event Action<int, int> OnAmmoChanged; // <current, reserve>
         public event Action OnFired;
         public event Action OnReloadStarted;
         public event Action OnReloadCompleted;
@@ -41,7 +37,6 @@ namespace BITROOT.Combat
             Debug.Log($"PrimaryAction called for {data.displayName} at {Time.time:F2}, next allowed at {nextFireTime:F2}");
             if (data.fireMode == Inventory.FireMode.Automatic)
             {
-                // Called once per input-down; hold logic is driven by TriggerDown/TriggerUp.
                 TriggerDown();
                 return;
             }
@@ -49,7 +44,6 @@ namespace BITROOT.Combat
             TryFireOnce();
         }
 
-        /// <summary>Call from input "hold" for automatic weapons.</summary>
         public void TriggerDown()
         {
             triggerHeld = true;
@@ -106,9 +100,7 @@ namespace BITROOT.Combat
                 if (hit.collider.TryGetComponent<IDamageable>(out var damageable))
                 {
                     damageable.TakeDamage(data.damage, owner, DamageType.Bullet);
-                }
-                // Hook impact VFX/decals here based on hit.point / hit.normal.
-                
+                }                
             }
         }
 

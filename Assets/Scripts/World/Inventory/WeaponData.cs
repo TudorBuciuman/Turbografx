@@ -21,8 +21,8 @@ namespace BITROOT.Inventory
     {
         [Header("Weapon")]
         public WeaponType weaponType;
-        public GameObject worldPrefab;     // dropped-in-world / equipped visual prefab
-        public GameObject viewModelPrefab; // optional first/third person arms model
+        public GameObject worldPrefab;    
+        public GameObject viewModelPrefab; 
 
         [Header("Damage")]
         public float damage = 10f;
@@ -30,20 +30,20 @@ namespace BITROOT.Inventory
 
         [Header("Gun-specific")]
         public FireMode fireMode = FireMode.Single;
-        public float fireRate = 8f;          // rounds per second
+        public float fireRate = 8f;          
         public float range = 50f;
         public int magazineSize = 12;
         public int startingReserveAmmo = 60;
         public float reloadTime = 1.6f;
-        public float bulletSpread = 1.5f;    // degrees
+        public float bulletSpread = 1.5f;    
         public LayerMask hitMask = ~0;
 
         [Header("Katana-specific")]
         public int comboLength = 3;
-        public float comboWindow = 0.8f;     // seconds to chain the next hit
+        public float comboWindow = 0.8f;     
         public float attackRange = 2f;
         public float attackRadius = 0.6f;
-        [Tooltip("Damage multiplier applied to the final hit in a combo.")]
+        [Tooltip("Damage multiplier is applied to the final hit in a combo")]
         public float finisherMultiplier = 1.75f;
 
         [Header("Grenade-specific")]

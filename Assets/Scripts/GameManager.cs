@@ -15,7 +15,7 @@ public class GameManager : MonoBehaviour
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
 #endif
-
+        Screen.sleepTimeout = SleepTimeout.NeverSleep;
         Application.targetFrameRate = 60;
     }
     public void Start()
@@ -79,12 +79,12 @@ public class GameManager : MonoBehaviour
 
         audio.volume = startVolume;
     }
-
     public void DisablePlayerMovement()
     {
         if (FindObjectsByType<PlayerMovement>(FindObjectsSortMode.None) != null)
         {
             FindFirstObjectByType<PlayerMovement>().canMove=false;
+            FindFirstObjectByType<PlayerMovement>().canAttack=false;
         }
     }
     public void EnablePlayerMovement()
@@ -92,6 +92,7 @@ public class GameManager : MonoBehaviour
         if (FindObjectsByType<PlayerMovement>(FindObjectsSortMode.None) != null)
         {
             FindFirstObjectByType<PlayerMovement>().canMove = true;
+            FindFirstObjectByType<PlayerMovement>().canAttack = true;
         }
     }
     private Vector2 spawnPos;

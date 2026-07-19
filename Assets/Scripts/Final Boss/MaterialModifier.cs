@@ -6,6 +6,8 @@ using UnityEngine;
 public class MaterialModifier : MonoBehaviour
 {
     public static Material Turbografx;
+    [SerializeField]
+    private bool isBleeding = false;
     public const float TransitionTime = 3;
 
     public void Start()
@@ -16,6 +18,7 @@ public class MaterialModifier : MonoBehaviour
     {
         Turbografx = Resources.Load<Material>("Material/Turbografx");
         SetTurbografx();
+        if(isBleeding)
         this.GetComponent<MaterialModifier>().SetBleeding();
     }
     /* Normal values
@@ -46,7 +49,7 @@ public class MaterialModifier : MonoBehaviour
         while (time < TransitionTime)
         {
             time += Time.deltaTime;
-            Turbografx.SetFloat("_ColorBleed", Mathf.Lerp(0.00339f, 0.007f, time/TransitionTime));
+            Turbografx.SetFloat("_ColorBleed", Mathf.Lerp(0.00339f, 0.005f, time/TransitionTime));
             Turbografx.SetFloat("_Vignette", Mathf.Lerp(1.29f, 2.0f, time/TransitionTime));
             yield return null;
         }

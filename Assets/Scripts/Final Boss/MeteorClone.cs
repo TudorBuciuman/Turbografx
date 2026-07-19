@@ -9,11 +9,8 @@ public class MeteorClone : MonoBehaviour
     private Vector2        arenaMin;
     private Vector2        arenaMax;
 
-    [Header("Stats")]
-    [Tooltip("Damage dealt on contact with player (should be ~half the boss's meteor damage)")]
     public int contactDamage = 8;
 
-    [Header("Visual")]
     public SpriteRenderer cloneSprite;
     public void Initialize(Transform target, float speed, GameObject trailPrefab,
                            Vector2 minBounds, Vector2 maxBounds)

@@ -2,15 +2,6 @@ using UnityEngine;
 
 namespace BITROOT.UI
 {
-    /// <summary>
-    /// Single source of truth for the Cyberpunk 2077-inspired palette so every UI
-    /// script (inventory, weapon wheel, health bar, crafting menu) pulls from the
-    /// same colors instead of each hardcoding its own hex values.
-    ///
-    /// Pairs well with a sharp, slightly condensed font (e.g. Rajdhani, Chakra Petch,
-    /// or Blender Pro if you own it) and hard-edged or single-corner-cut panels rather
-    /// than rounded rectangles - rounded corners read as "mobile app," not "netrunner."
-    /// </summary>
     public static class CyberpunkTheme
     {
         public static readonly Color PanelBackground = new Color(0.04f, 0.05f, 0.07f, 0.92f);

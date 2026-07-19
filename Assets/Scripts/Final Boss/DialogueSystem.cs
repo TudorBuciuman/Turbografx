@@ -3,36 +3,20 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-/// <summary>
-/// BITROOT Dialogue System — Deltarune ch3 minigame style.
-/// Attach to a DialogueBox GameObject in your Canvas.
-///
-/// Setup:
-///   - DialogueBox (this script lives here, with a Panel/Image background)
-///       - NameLabel         (TMP_Text)  — optional speaker name tag
-///       - DialogueText      (TMP_Text)  — main typewriter text
-///       - ContinueArrow     (GameObject) — blinking ▼ arrow at box bottom-right
-///
-/// Assign an AudioClip (8-bit blip) to typingSFX.
-/// Call DialogueSystem.instance.StartDialogue(DialogueLine[]) from anywhere.
-/// </summary>
-
 [System.Serializable]
 public class DialogueLine
 {
     [TextArea(2, 6)]
     public string text;
-    public string speakerName;          // leave empty to hide name tag
-    public float  charDelay = 0.04f;    // seconds per character (default Deltarune feel)
-    public bool   instantReveal = false; // for short impact lines
+    public string speakerName;     
+    public float  charDelay = 0.04f;   
+    public bool   instantReveal = false; 
 }
 
 public class DialogueSystem : MonoBehaviour
 {
-    // ── Singleton ──────────────────────────────────────────────────────────
     public static DialogueSystem instance;
 
-    // ── Inspector refs ─────────────────────────────────────────────────────
     [Header("UI References")]
     public GameObject    dialogueBox;
     public Text      dialogueText;
@@ -44,18 +28,12 @@ public class DialogueSystem : MonoBehaviour
     public AudioSource   audioSource;
     public AudioClip     typingSFX;
     [Range(0f, 1f)]
-    public float         typingVolume    = 0.6f;
-    [Tooltip("Play sfx every N characters (1 = every char, 2 = every other, etc.)")]
-    public int           sfxEveryNChars  = 2;
+    public float typingVolume = 0.6f;
+    public int sfxEveryNChars  = 2;
 
-    [Header("Arrow Blink")]
-    public float         arrowBlinkRate  = 0.45f;   // seconds per blink half-cycle
+    public float arrowBlinkRate  = 0.45f;   
+    public float autoCloseDelay  = 0f;
 
-    [Header("Timing")]
-    [Tooltip("How long to wait after last line before auto-closing (0 = never auto-close)")]
-    public float         autoCloseDelay  = 0f;
-
-    // ── Private state ──────────────────────────────────────────────────────
     private DialogueLine[]  _lines;
     private int             _currentLine;
     private bool            _isTyping;
@@ -64,13 +42,10 @@ public class DialogueSystem : MonoBehaviour
     private Coroutine       _typeCoroutine;
     private Coroutine       _arrowCoroutine;
 
-    // ── Events ─────────────────────────────────────────────────────────────
-    public System.Action    OnDialogueEnd;   // fired when all lines are done
+    public System.Action OnDialogueEnd;   
 
-    // ───────────────────────────────────────────────────────────────────────
     void Awake()
     {
-        //if (instance != null && instance != this) { Destroy(gameObject); return; }
         instance = this;
 
         dialogueBox.SetActive(false);
@@ -81,27 +56,19 @@ public class DialogueSystem : MonoBehaviour
     {
         if (!_dialogueActive) return;
 
-        bool advance = Input.GetKeyDown(KeyCode.Z)
-                    || Input.GetKeyDown(KeyCode.Return)
-                    || Input.GetKeyDown(KeyCode.KeypadEnter);
+        bool advance = Input.GetKeyDown(KeyCode.Z) || Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter);
 
         if (!advance) return;
 
         if (_isTyping)
         {
-            // First press while typing → instantly reveal full line
             _skipRequested = true;
         }
         else
         {
-            // Line already fully shown → advance to next
             AdvanceLine();
         }
     }
-
-    // ───────────────────────────────────────────────────────────────────────
-    // Public API
-    // ───────────────────────────────────────────────────────────────────────
 
     public void StartDialogue(DialogueLine[] lines)
     {
@@ -118,7 +85,6 @@ public class DialogueSystem : MonoBehaviour
         ShowLine(_currentLine);
     }
 
-    // Convenience overload: single line
     public void StartDialogue(string text, string speaker = "")
     {
         StartDialogue(new DialogueLine[]
@@ -127,15 +93,11 @@ public class DialogueSystem : MonoBehaviour
         });
     }
 
-    // ───────────────────────────────────────────────────────────────────────
-    // Internal
-    // ───────────────────────────────────────────────────────────────────────
 
     void ShowLine(int index)
     {
         DialogueLine line = _lines[index];
 
-        // Name tag
         if (nameLabel != null)
         {
             bool hasName = !string.IsNullOrEmpty(line.speakerName);
@@ -143,7 +105,6 @@ public class DialogueSystem : MonoBehaviour
             if (hasName) nameLabel.text = line.speakerName;
         }
 
-        // Hide arrow while typing
         SetArrow(false);
 
         if (_typeCoroutine != null) StopCoroutine(_typeCoroutine);
@@ -170,7 +131,6 @@ public class DialogueSystem : MonoBehaviour
             {
                 if (_skipRequested) break;
 
-                // Handle rich text tags: skip ahead without delay
                 if (full[i] == '<')
                 {
                     int close = full.IndexOf('>', i);
@@ -185,19 +145,15 @@ public class DialogueSystem : MonoBehaviour
                 dialogueText.text = full.Substring(0, i + 1);
                 charCount++;
 
-                // Sound every N visible characters (skip spaces & punctuation pauses)
                 if (full[i] != ' ' && charCount % sfxEveryNChars == 0)
                     PlayTypingSound();
 
-                // Punctuation micro-pause (feels more natural / Deltarune-like)
                 float delay = line.charDelay;
                 if (full[i] == ',' || full[i] == ';') delay *= 4f;
                 else if (full[i] == '.' || full[i] == '!' || full[i] == '?') delay *= 6f;
 
                 yield return new WaitForSeconds(delay);
             }
-
-            // Instant-fill if skipped mid-type
             dialogueText.text = full;
         }
 
@@ -215,7 +171,6 @@ public class DialogueSystem : MonoBehaviour
         }
         else
         {
-            // Show blinking arrow only if there's more or player must dismiss
             SetArrow(true);
         }
     }
@@ -250,8 +205,6 @@ public class DialogueSystem : MonoBehaviour
         EndDialogue();
     }
 
-    // ── Arrow blink ────────────────────────────────────────────────────────
-
     void SetArrow(bool visible)
     {
         if (_arrowCoroutine != null) StopCoroutine(_arrowCoroutine);
@@ -271,8 +224,6 @@ public class DialogueSystem : MonoBehaviour
             yield return new WaitForSeconds(arrowBlinkRate);
         }
     }
-
-    // ── Audio ──────────────────────────────────────────────────────────────
 
     void PlayTypingSound()
     {

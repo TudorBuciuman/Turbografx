@@ -20,11 +20,6 @@ namespace BITROOT.Inventory
 
         public bool IsEmpty => item == null || count <= 0;
     }
-
-    /// <summary>
-    /// Holds the player's (or any actor's) items. UI, crafting, and weapon systems
-    /// all talk to this through events / public methods rather than touching each other.
-    /// </summary>
     public class InventorySystem : MonoBehaviour
     {
         [SerializeField] private int slotCapacity = 40;
@@ -32,16 +27,10 @@ namespace BITROOT.Inventory
 
         public IReadOnlyList<InventorySlot> Slots => slots;
 
-        // Decoupled event hooks
         public event Action OnInventoryChanged;
         public event Action<ItemData, int> OnItemAdded;
         public event Action<ItemData, int> OnItemRemoved;
         public event Action OnInventoryFull;
-
-        /// <summary>
-        /// Adds an item, filling existing stacks first, then new slots.
-        /// Returns how many units were actually added (may be less than requested if full).
-        /// </summary>
         public int AddItem(ItemData item, int amount = 1)
         {
             if (item == null || amount <= 0) return 0;
@@ -85,10 +74,6 @@ namespace BITROOT.Inventory
             return added;
         }
 
-        /// <summary>
-        /// Removes up to `amount` units of an item. Returns how many were actually removed.
-        /// Use HasItem() first if you need an all-or-nothing check (e.g. crafting).
-        /// </summary>
         public int RemoveItem(ItemData item, int amount = 1)
         {
             if (item == null || amount <= 0) return 0;

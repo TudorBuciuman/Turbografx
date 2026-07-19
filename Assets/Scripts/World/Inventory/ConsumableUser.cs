@@ -5,11 +5,6 @@ using BITROOT.Combat;
 
 namespace BITROOT.Inventory
 {
-    /// <summary>
-    /// Put this on the player alongside InventorySystem, HealthSystem, and WeaponManager.
-    /// Translates "use this consumable" into the right effect without those systems
-    /// needing to know consumables exist at all.
-    /// </summary>
     [RequireComponent(typeof(InventorySystem))]
     public class ConsumableUser : MonoBehaviour
     {
@@ -23,11 +18,6 @@ namespace BITROOT.Inventory
             if (health == null) health = GetComponent<HealthSystem>();
             if (weaponManager == null) weaponManager = GetComponent<WeaponManager>();
         }
-
-        /// <summary>
-        /// Attempts to use one unit of the given consumable from the inventory.
-        /// Returns false if the player doesn't have it or the effect can't apply right now.
-        /// </summary>
         public bool UseConsumable(ConsumableData item)
         {
             if (item == null || !inventory.HasItem(item, 1)) return false;
@@ -60,7 +50,6 @@ namespace BITROOT.Inventory
                     return true;
 
                 case ConsumableEffect.TemporaryBuff:
-                    // Hook into a buff/status-effect system here once one exists.
                     inventory.RemoveItem(item, 1);
                     return true;
 

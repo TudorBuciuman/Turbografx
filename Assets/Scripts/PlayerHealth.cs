@@ -9,7 +9,7 @@ public class PlayerHealth : MonoBehaviour
     public float coolDown = 0.2f;
     private float time = 0.2f;
     public bool immune=false;
-    public static int MaxHealth = 5;
+    public static int MaxHealth = 4;
 
     public void Update()
     {
@@ -22,7 +22,7 @@ public class PlayerHealth : MonoBehaviour
     }
     public void Heal(int plus)
     {
-        if ((health += plus) <= FindFirstObjectByType<PlayerStats>().GetMaxHealth())
+        if ((health + plus) <= FindFirstObjectByType<PlayerStats>().GetMaxHealth())
             health += plus;
         else
             health = FindFirstObjectByType<PlayerStats>().GetMaxHealth();
@@ -42,6 +42,7 @@ public class PlayerHealth : MonoBehaviour
             FindFirstObjectByType<PlayerStats>().UpdateHealth();
             if (health <= 0)
             {
+                PlayerStats.level = 1;
                 Destroy(FindFirstObjectByType<PlayerMovement>().gameObject);
                 GameManager.gm.ChangeScene(2);
             }

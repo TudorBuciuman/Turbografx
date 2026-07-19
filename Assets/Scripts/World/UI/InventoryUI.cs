@@ -5,18 +5,6 @@ using BITROOT.Combat;
 
 namespace BITROOT.UI
 {
-    /// <summary>
-    /// The full inventory screen. Listens to InventorySystem's events and rebuilds
-    /// the grid - it never polls. Clicking a slot equips weapons or uses consumables;
-    /// everything else (materials, quest items) just shows info.
-    ///
-    /// Hierarchy expected:
-    ///   InventoryPanel (this component, starts inactive)
-    ///     - Background
-    ///     - Header (title text, close button)
-    ///     - SlotGrid (GridLayoutGroup, parent for instantiated InventorySlotUI prefabs)
-    ///     - Tooltip (ItemTooltipUI)
-    /// </summary>
     public class InventoryUI : MonoBehaviour
     {
         [SerializeField] private GameObject panelRoot;
@@ -74,14 +62,12 @@ namespace BITROOT.UI
             Cursor.visible = false;
         }
 
-        /// <summary>Rebuilds every slot tile from the current inventory contents.</summary>
         private void Refresh()
         {
             if (inventory == null || slotGridParent == null || slotPrefab == null) return;
 
             var slotsData = inventory.Slots;
 
-            // Grow the pool if the inventory has more entries than we've spawned tiles for.
             while (spawnedSlots.Count < slotsData.Count)
             {
                 var newSlot = Instantiate(slotPrefab, slotGridParent);
@@ -127,7 +113,6 @@ namespace BITROOT.UI
                     break;
 
                 default:
-                    // Materials / quest items: no click action, tooltip is enough.
                     break;
             }
         }

@@ -4,10 +4,6 @@ using UnityEngine;
 
 namespace BITROOT.Health
 {
-    /// <summary>
-    /// Generic damageable interface so weapons, hazards, and explosions
-    /// don't need to know whether they're hitting the player or an enemy.
-    /// </summary>
     public interface IDamageable
     {
         void TakeDamage(float amount, GameObject source, DamageType type = DamageType.Generic);
@@ -22,11 +18,6 @@ namespace BITROOT.Health
         Explosion,
         Environmental
     }
-
-    /// <summary>
-    /// Drop this on the player or any enemy. Decoupled via System.Action events —
-    /// UI, cutscene director, and AI all subscribe instead of being referenced directly.
-    /// </summary>
     public class HealthSystem : MonoBehaviour, IDamageable
     {
         [Header("Base Stats")]
@@ -34,15 +25,11 @@ namespace BITROOT.Health
         [SerializeField] private float currentHealth;
         [SerializeField] private bool invulnerable = false;
 
-        [Header("Regen (passive, optional)")]
         [SerializeField] private bool enablePassiveRegen = false;
         [SerializeField] private float regenPerSecond = 2f;
         [SerializeField] private float regenDelayAfterDamage = 4f;
 
-        [Header("Fast Heal (item-triggered)")]
-        [Tooltip("How long a 'fast heal' item takes to apply, e.g. a med-kit animation window.")]
         [SerializeField] private float fastHealDuration = 1.2f;
-        [SerializeField] private bool canFastHealWhileMoving = true;
 
         private float lastDamageTime;
         private Coroutine regenRoutine;
@@ -54,13 +41,12 @@ namespace BITROOT.Health
         public bool IsDead { get; private set; }
         public bool IsFastHealing { get; private set; }
 
-        // Decoupled event hooks
-        public event Action<float, float> OnHealthChanged;   // (current, max)
-        public event Action<float, GameObject, DamageType> OnDamaged; // (amount, source, type)
+        public event Action<float, float> OnHealthChanged; 
+        public event Action<float, GameObject, DamageType> OnDamaged; 
         public event Action OnDeath;
         public event Action OnRevive;
-        public event Action<float> OnFastHealStarted;   // duration
-        public event Action<float> OnFastHealCompleted; // amount healed
+        public event Action<float> OnFastHealStarted;  
+        public event Action<float> OnFastHealCompleted; 
 
         private void Awake()
         {
@@ -85,7 +71,6 @@ namespace BITROOT.Health
             currentHealth = Mathf.Max(0f, currentHealth - amount);
             lastDamageTime = Time.time;
 
-            // Getting hit interrupts a fast heal in progress.
             if (fastHealRoutine != null)
             {
                 StopCoroutine(fastHealRoutine);
@@ -110,10 +95,6 @@ namespace BITROOT.Health
             else OnHealthChanged?.Invoke(currentHealth, maxHealth);
         }
 
-        /// <summary>
-        /// Call this from a consumable item (med-kit, nano-stim, etc).
-        /// Applies a short delay then heals a flat amount, matching an animation/use-time.
-        /// </summary>
         public void StartFastHeal(float healAmount)
         {
             if (IsDead || IsFastHealing) return;
@@ -131,7 +112,6 @@ namespace BITROOT.Health
             while (t < fastHealDuration)
             {
                 t += Time.deltaTime;
-                // If damage interrupts it, TakeDamage() will null the routine and stop this loop next Update.
                 yield return null;
             }
 

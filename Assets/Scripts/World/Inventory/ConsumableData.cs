@@ -16,9 +16,9 @@ namespace BITROOT.Inventory
     {
         [Header("Consumable")]
         public ConsumableEffect effect = ConsumableEffect.FastHeal;
-        public float value = 30f;          // heal amount / ammo amount / buff magnitude
-        public float duration = 0f;        // for HoT or buffs, 0 = instant
-        public float useTime = 1.2f;       // animation / channel time before effect applies
+        public float value = 30f;          
+        public float duration = 0f;        
+        public float useTime = 1.2f;      
         public AudioClip useSound;
     }
 

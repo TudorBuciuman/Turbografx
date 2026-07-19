@@ -1,38 +1,28 @@
 using UnityEngine;
 using UnityEngine.Events;
 
-/// <summary>
-/// BossFightManager — orchestrates the Shadow Mantle Holder encounter.
-/// Place in the scene. Assign bossSpawnPoint and bossPrefab in the Inspector.
-/// Hook onBossDefeated to your reward/scene-transition logic.
-/// </summary>
 public class BossFightManager : MonoBehaviour
 {
-    [Header("References")]
-    public GameObject          bossPrefab;
-    public Transform           bossSpawnPoint;
+    public GameObject bossPrefab;
+    public Transform bossSpawnPoint;
 
-    [Header("Arena Doors (optional)")]
-    [Tooltip("Door GameObjects to lock when fight starts / unlock on defeat")]
-    public GameObject[]        arenaDoors;
+    public GameObject[] arenaDoors;
 
-    [Header("Events")]
-    public UnityEvent          onFightStart;
-    public UnityEvent          onBossDefeated;
+    public UnityEvent onFightStart;
+    public UnityEvent onBossDefeated;
 
-    [Header("Reward")]
-    [Tooltip("Item dropped at spawn point on defeat")]
-    public GameObject          rewardPickupPrefab;
+    public GameObject rewardPickupPrefab;
+    public AudioSource audioSource;
 
     private ShadowMantleHolder bossInstance;
-    private bool               fightStarted = false;
+    private bool fightStarted = false;
 
-    /// <summary>Call this to begin the fight (e.g. from ArenaFightTrigger or dialogue).</summary>
     public void StartFight()
     {
         if (fightStarted) return;
         fightStarted = true;
 
+        audioSource.Play();
         LockDoors(true);
         Vector3 spawnPos = bossSpawnPoint != null ? bossSpawnPoint.position : Vector3.zero;
         GameObject boss  = Instantiate(bossPrefab, spawnPos, Quaternion.identity);
@@ -41,7 +31,6 @@ public class BossFightManager : MonoBehaviour
         onFightStart?.Invoke();
     }
 
-    /// <summary>Called by ShadowMantleHolder when defeated.</summary>
     public void OnBossDefeated()
     {
         LockDoors(false);

@@ -3,56 +3,27 @@ using UnityEngine;
 
 public class CRTRevealCutscene : MonoBehaviour
 {
-    [Header("References")]
     [SerializeField] private Camera cutsceneCamera;
     [SerializeField] private Transform revealEndPoint;
     [SerializeField] private GameObject bedCollider;
     [SerializeField] private AudioSource noise;
     [SerializeField] private AudioSource music;
     [SerializeField] private AudioSource girlfriend;
+    [SerializeField] private GameObject playerRoot; 
 
-    [Tooltip("Optional: player root / controller object to disable during the cutscene and re-enable afterward.")]
-    [SerializeField] private GameObject playerRoot;
-
-    [Header("Cutscene Timing")]
     [SerializeField] private bool playOnStart = true;
-
-    [Tooltip("Delay before the camera starts pulling back.")]
     [SerializeField] private float initialPause = 1.5f;
-
-    [Tooltip("How long the zoom-out / reveal lasts.")]
     [SerializeField] private float revealDuration = 4f;
     [SerializeField] private float playerMoveDuration = 2f;
-
-    [Tooltip("Optional pause after the reveal completes, before handing control back.")]
     [SerializeField] private float endPause = 0.5f;
-
-    [Header("FOV")]
     [SerializeField] private float startFOV = 20f;
     [SerializeField] private float endFOV = 60f;
 
-    [Header("Motion")]
-    [Tooltip("If true, the camera will also rotate to match the end transform.")]
-    [SerializeField] private bool rotateCamera = true;
-
-    [Tooltip("Use an ease curve instead of linear interpolation.")]
     [SerializeField]
     private AnimationCurve revealCurve = new AnimationCurve(
         new Keyframe(0f, 0f, 0f, 2f),
         new Keyframe(1f, 1f, 0f, 0f)
     );
-
-    [Header("Optional Final Step")]
-    [Tooltip("If true, the cutscene script enables the player object at the end.")]
-    [SerializeField] private bool enablePlayerAtEnd = true;
-
-    [Tooltip("If true, the cutscene script disables the player object at the beginning.")]
-    [SerializeField] private bool disablePlayerAtStart = true;
-
-    [Tooltip("Optional Animator trigger to fire at the end, for the 'getting up' animation/sequence.")]
-    [SerializeField] private Animator playerAnimator;
-    [SerializeField] private string standUpTrigger = "StandUp";
-
     public Light revealLight; 
 
     private bool hasPlayed;
@@ -97,20 +68,7 @@ public class CRTRevealCutscene : MonoBehaviour
     }
 
     private IEnumerator PlayCutsceneRoutine()
-    {
-        if (cutsceneCamera == null)
-        {
-            Debug.LogError("CRTRevealCutscene: No camera assigned.");
-            yield break;
-        }
-
-        if (revealEndPoint == null)
-        {
-            Debug.LogError("CRTRevealCutscene: No reveal end point assigned.");
-            yield break;
-        }
-
-        
+    {   
         cutsceneCamera.fieldOfView = startFOV;
 
         Vector3 startPos = cutsceneCamera.transform.position;
@@ -132,19 +90,13 @@ public class CRTRevealCutscene : MonoBehaviour
             float easedT = revealCurve != null ? revealCurve.Evaluate(t) : t;
 
             cutsceneCamera.transform.position = Vector3.Lerp(startPos, endPos, easedT);
-
-            if (rotateCamera)
-            {
-                cutsceneCamera.transform.rotation = Quaternion.Slerp(startRot, endRot, easedT);
-            }
-
+            cutsceneCamera.transform.rotation = Quaternion.Slerp(startRot, endRot, easedT);
             cutsceneCamera.fieldOfView = Mathf.Lerp(startFOV, endFOV, easedT);
 
             yield return null;
         }
         cutsceneCamera.transform.position = endPos;
-        if (rotateCamera)
-            cutsceneCamera.transform.rotation = endRot;
+        cutsceneCamera.transform.rotation = endRot;
 
         cutsceneCamera.fieldOfView = endFOV;
 
@@ -161,7 +113,7 @@ public class CRTRevealCutscene : MonoBehaviour
             elapsed += Time.deltaTime;
 
             float t = elapsed / playerMoveDuration;
-            t = Mathf.SmoothStep(0f, 1f, t);   // ease-out curve
+            t = Mathf.SmoothStep(0f, 1f, t);   
 
             playerRoot.transform.position = Vector3.Lerp(pos1, pos2, t);
             yield return null;
@@ -179,6 +131,6 @@ public class CRTRevealCutscene : MonoBehaviour
     {
         MouseLook.CanLook = true;
         PlayerMove.canMove=true;
-        Debug.Log("CRT reveal cutscene finished.");
+        Debug.Log("It's so over...");
     }
 }

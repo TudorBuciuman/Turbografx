@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Tilemaps;
 
 [RequireComponent(typeof(SpriteRenderer))]
 [RequireComponent(typeof(Animator))]
@@ -12,6 +11,7 @@ public class PlayerMovement : MonoBehaviour
     public float moveSpeed = 4f;
     public int roomsWidth = 4;//4 is default
     public bool canMove = true;
+    public bool canAttack = true;
     private Rigidbody2D rb;
     private Vector2 movement;
     public Animator anim;
@@ -29,13 +29,32 @@ public class PlayerMovement : MonoBehaviour
 
     public static PlayerMovement instance;
 
+    [Header("Auto Demo")]
+    public bool autoDemoMode = false; 
+    private Vector2 externalInput = Vector2.zero;
+
+    public void SetExternalInput(Vector2 input)
+    {
+        externalInput = input;
+    }
+
+    private float GetInputH()
+    {
+        return autoDemoMode ? externalInput.x : UTInput.GetAxisRaw("Horizontal");
+    }
+
+    private float GetInputV()
+    {
+        return autoDemoMode ? externalInput.y : UTInput.GetAxisRaw("Vertical");
+    }
+
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         sr = base.transform.GetComponent<SpriteRenderer>();
         anim = base.transform.GetComponent<Animator>();
         anim.runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("miniplayer");
-        if(GetDirection().x==0 && GetDirection().y == 0)
+        if (GetDirection().x == 0 && GetDirection().y == 0)
         {
             ChangeDirection(Vector2.down);
         }
@@ -55,8 +74,8 @@ public class PlayerMovement : MonoBehaviour
     {
         if (canMove)
         {
-            float moveX = UTInput.GetAxisRaw("Horizontal");
-            float moveY = UTInput.GetAxisRaw("Vertical");
+            float moveX = GetInputH();
+            float moveY = GetInputV();
 
             if (Moved())
             {
@@ -111,9 +130,9 @@ public class PlayerMovement : MonoBehaviour
     }
     private bool Moved()
     {
-        if (UTInput.GetAxisRaw("Horizontal") == 0f)
+        if (GetInputH() == 0f)
         {
-            return UTInput.GetAxisRaw("Vertical") != 0f;
+            return GetInputV() != 0f;
         }
         return true;
     }
@@ -126,9 +145,9 @@ public class PlayerMovement : MonoBehaviour
         canMove = false;
         movement = Vector2.zero;
         currentRoom += (int)v.x;
-        currentRoom +=(int)v.y*roomsWidth;
+        currentRoom += (int)v.y * roomsWidth;
         EnemyMovement[] t = FindObjectsByType<EnemyMovement>(FindObjectsSortMode.None);
-        foreach(EnemyMovement a in t)
+        foreach (EnemyMovement a in t)
         {
             a.OnPlayerExitRoom();
         }
@@ -168,6 +187,7 @@ public class PlayerMovement : MonoBehaviour
     }
     public void MovementToZero()
     {
+        anim.SetBool("isMoving", false);
         movement = Vector2.zero;
     }
     public Vector2 GetFaceDirection()
@@ -180,6 +200,13 @@ public class PlayerMovement : MonoBehaviour
             return;
 
         StartCoroutine(KnockbackRoutine(sourcePosition));
+    }
+    public void ApplySmallKnockback(Vector2 sourcePosition)
+    {
+        if (!gameObject.activeInHierarchy || isKnockedBack)
+            return;
+
+        StartCoroutine(SmallKnockbackRoutine(sourcePosition));
     }
     IEnumerator KnockbackRoutine(Vector2 sourcePosition)
     {
@@ -195,6 +222,31 @@ public class PlayerMovement : MonoBehaviour
         while (timer < knockbackDuration)
         {
             rb.velocity = dir * knockbackForce;
+
+            timer += Time.deltaTime;
+            yield return null;
+        }
+
+        rb.velocity = Vector2.zero;
+        movement = Vector2.zero;
+
+        canMove = true;
+        isKnockedBack = false;
+    }
+    IEnumerator SmallKnockbackRoutine(Vector2 sourcePosition)
+    {
+        isKnockedBack = true;
+        canMove = false;
+
+        anim.SetBool("isMoving", false);
+
+        Vector2 dir = ((Vector2)transform.position - sourcePosition).normalized;
+
+        float timer = 0f;
+
+        while (timer < knockbackDuration / 2)
+        {
+            rb.velocity = dir * knockbackForce / 2;
 
             timer += Time.deltaTime;
             yield return null;

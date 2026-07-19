@@ -4,7 +4,6 @@ using BITROOT.Inventory;
 
 namespace BITROOT.UI
 {
-    /// <summary>Small floating panel: name + description + (weapon stats or consumable value). Follows the cursor.</summary>
     public class ItemTooltipUI : MonoBehaviour
     {
         [SerializeField] private RectTransform panel;

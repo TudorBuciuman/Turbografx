@@ -4,6 +4,8 @@ public class Arrow : MonoBehaviour
 {
     public float speed = 5f;
     public int damage = 1;
+    public float lifetime = 2f;
+    public float t = 0f;
 
     private Vector2 direction;
     public void Start()
@@ -22,6 +24,11 @@ public class Arrow : MonoBehaviour
     void Update()
     {
         transform.position += (Vector3)(direction * speed * Time.deltaTime);
+        t+= Time.deltaTime;
+        if (t >= lifetime)
+        {
+            Destroy(gameObject);
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D other)

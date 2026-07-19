@@ -5,11 +5,6 @@ using BITROOT.Inventory;
 
 namespace BITROOT.Combat
 {
-    /// <summary>
-    /// Throwable weapon slot. Spawns a GrenadeProjectile that carries its own
-    /// fuse + explosion logic, so the thrown object works independently of
-    /// whoever threw it (important once it's flying through the world).
-    /// </summary>
     public class Grenade : WeaponBase
     {
         [SerializeField] private Transform throwOrigin;
@@ -44,7 +39,6 @@ namespace BITROOT.Combat
             }
             else if (go.TryGetComponent<Rigidbody>(out var rb))
             {
-                // Fallback if the prefab doesn't have GrenadeProjectile attached.
                 rb.AddForce(direction * data.throwForce, ForceMode.VelocityChange);
             }
 
@@ -55,10 +49,6 @@ namespace BITROOT.Combat
         }
     }
 
-    /// <summary>
-    /// Lives on the thrown grenade prefab itself. Handles fuse timing,
-    /// explosion radius damage with falloff, and cleanup.
-    /// </summary>
     [RequireComponent(typeof(Rigidbody))]
     public class GrenadeProjectile : MonoBehaviour
     {
@@ -67,7 +57,7 @@ namespace BITROOT.Combat
         private float fuseTimer;
         private bool exploded;
 
-        public event Action<Vector3, float> OnExploded; // position, radius - for VFX/camera shake hookup
+        public event Action<Vector3, float> OnExploded;
 
         public void Launch(GameObject throwingActor, WeaponData weaponData, Vector3 initialVelocity)
         {
@@ -98,7 +88,7 @@ namespace BITROOT.Combat
             Collider[] hits = Physics.OverlapSphere(transform.position, data.explosionRadius);
             foreach (var col in hits)
             {
-                if (col.gameObject == thrower) continue; // no self-damage; drop this line for FF-on games
+                if (col.gameObject == thrower) continue; 
                 if (!col.TryGetComponent<IDamageable>(out var damageable) || damageable.IsDead) continue;
 
                 float distance = Vector3.Distance(transform.position, col.transform.position);
@@ -111,7 +101,6 @@ namespace BITROOT.Combat
             }
 
             OnExploded?.Invoke(transform.position, data.explosionRadius);
-            // Hook explosion VFX/SFX/camera shake here before destroying.
             Destroy(gameObject);
         }
 

@@ -6,11 +6,6 @@ using BITROOT.Inventory;
 
 namespace BITROOT.Crafting
 {
-    /// <summary>
-    /// Sits next to (or references) the player's InventorySystem.
-    /// Validates recipes, consumes ingredients, and grants the crafted item.
-    /// Pure logic - no UI assumptions; hook a crafting menu up to the events below.
-    /// </summary>
     public class CraftingSystem : MonoBehaviour
     {
         [SerializeField] private InventorySystem inventory;
@@ -18,7 +13,7 @@ namespace BITROOT.Crafting
 
         public event Action<CraftingRecipe> OnCraftStarted;
         public event Action<CraftingRecipe> OnCraftCompleted;
-        public event Action<CraftingRecipe, string> OnCraftFailed; // recipe, reason
+        public event Action<CraftingRecipe, string> OnCraftFailed; 
 
         private void Reset()
         {
@@ -42,11 +37,6 @@ namespace BITROOT.Crafting
             if (!IsUnlocked(recipe)) return false;
             return inventory.HasIngredients(recipe.ingredients);
         }
-
-        /// <summary>
-        /// Attempts to craft immediately (no travel through craftTime). Use TryCraftTimed
-        /// if the recipe should play out over its craftTime (e.g. with a progress bar).
-        /// </summary>
         public bool TryCraft(CraftingRecipe recipe)
         {
             if (!ValidateCraft(recipe, out string reason))
@@ -61,10 +51,6 @@ namespace BITROOT.Crafting
             return true;
         }
 
-        /// <summary>
-        /// Starts a coroutine-based craft that respects recipe.craftTime.
-        /// Ingredients are consumed up-front so the player can't cancel and dupe items.
-        /// </summary>
         public void TryCraftTimed(CraftingRecipe recipe)
         {
             if (!ValidateCraft(recipe, out string reason))

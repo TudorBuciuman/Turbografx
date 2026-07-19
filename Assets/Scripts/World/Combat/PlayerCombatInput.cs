@@ -3,26 +3,13 @@ using BITROOT.Inventory;
 
 namespace BITROOT.Combat
 {
-    /// <summary>
-    /// Reads raw input and drives WeaponManager / ConsumableUser. Kept as its own
-    /// component (not baked into WeaponManager) so swapping to the new Input System
-    /// later only means rewriting this one file.
-    ///
-    /// Bindings:
-    ///   Hold  Left Alt      -> open weapon wheel, scroll or 1/2/3 to highlight, release to equip
-    ///   Press X             -> use best available fast-heal consumable
-    ///   Press Mouse3 (wheel click) -> quick-throw grenade without swapping equipped weapon
-    /// </summary>
     [RequireComponent(typeof(WeaponManager))]
     public class PlayerCombatInput : MonoBehaviour
     {
         [SerializeField] private WeaponManager weaponManager;
         [SerializeField] private ConsumableUser consumableUser;
         [SerializeField] private InventorySystem inventory;
-        [SerializeField] private WeaponWheelUI weaponWheelUI; // optional; input still works without it
-
-        [Header("Fast Heal")]
-        [Tooltip("Preferred consumable to use with X. If it's out, falls back to the first FastHeal item found in the inventory.")]
+        [SerializeField] private WeaponWheelUI weaponWheelUI; 
         [SerializeField] private ConsumableData preferredHealItem;
 
         private void Reset()
@@ -75,7 +62,6 @@ namespace BITROOT.Combat
                 return;
             }
 
-            // Fall back to whatever fast-heal item is actually in the bag.
             if (inventory == null) return;
             foreach (var slot in inventory.Slots)
             {
@@ -89,7 +75,7 @@ namespace BITROOT.Combat
 
         private void HandleQuickGrenade()
         {
-            if (Input.GetMouseButtonDown(2)) // middle mouse / scroll wheel press
+            if (Input.GetMouseButtonDown(2)) 
             {
                 weaponManager?.QuickThrowGrenade();
             }
@@ -97,8 +83,6 @@ namespace BITROOT.Combat
 
         private void HandleFireInput()
         {
-            // Skip firing input entirely while the weapon wheel is open so a held
-            // trigger doesn't fire the old weapon while you're picking a new one.
             if (weaponWheelUI != null && weaponWheelUI.IsOpen) return;
 
             if (Input.GetMouseButtonDown(0)) weaponManager.FirePrimary();

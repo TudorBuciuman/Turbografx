@@ -37,7 +37,6 @@ public class WaveProjectile : MonoBehaviour
 
     void Update()
     {
-        // PURE linear motion (no curves, no easing, no oscillation)
         transform.position += (Vector3)(direction * speed * Time.deltaTime);
     }
 

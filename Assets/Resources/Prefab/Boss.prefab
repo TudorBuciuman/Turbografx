@@ -202,7 +202,7 @@ MonoBehaviour:
   meteorClonePrefab: {fileID: 3375861403028249217, guid: 9d530470679c34343a330af57e68d4ff, type: 3}
   arenaMin: {x: -8, y: -4}
   arenaMax: {x: 8, y: 4}
-  maxHealth: 500
+  maxHealth: 15
   moveSpeed: 1.5
   phase2Threshold: 0.75
   phase3Threshold: 0.5

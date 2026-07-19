@@ -1,34 +1,18 @@
 using UnityEngine;
 
-/// <summary>
-/// Projectile — generic travelling bullet (used for Shadow Mantle's hexagonal orbs).
-///
-/// SETUP:
-///   Attach to any projectile prefab.
-///   Requires a Collider2D (trigger) and a Rigidbody2D (kinematic).
-///   Call Initialize() immediately after Instantiate to set direction, speed and damage.
-/// </summary>
 [RequireComponent(typeof(Rigidbody2D))]
 public class Projectile : MonoBehaviour
 {
-    [Header("Settings (overridden at runtime by Initialize)")]
-    public float   speed          = 5f;
-    public int     damage         = 1;
-    public float   lifetime       = 6f;
+    private float speed = 10f;
+    private int damage = 1;
+    private float lifetime = 0.5f;
+    private bool faceDirection = true;
+    private bool  pixelSnap = false;
+    private float pixelsPerUnit = 16f;
 
-    [Header("Visual")]
-    [Tooltip("Optional: sprite rotates to face travel direction")]
-    public bool faceDirection     = true;
-
-    [Header("8-Bit Pixel Effect")]
-    [Tooltip("If true, movement snaps to a pixel grid each frame")]
-    public bool  pixelSnap        = false;
-    public float pixelsPerUnit    = 16f;
-
-    // ─────────────────────────────────────────────
-    private Vector2       moveDir;
-    private Rigidbody2D   rb;
-    private bool          initialised = false;
+    private Vector2 moveDir;
+    private Rigidbody2D rb;
+    private bool initialised = false;
 
     void Awake()
     {
@@ -39,11 +23,9 @@ public class Projectile : MonoBehaviour
 
     void Start()
     {
-        // Auto-destroy after lifetime
         Destroy(gameObject, lifetime);
     }
 
-    /// <summary>Called by ShadowMantleHolder immediately after spawning.</summary>
     public void Initialize(Vector2 direction, float bulletSpeed, int bulletDamage)
     {
         moveDir     = direction.normalized;
@@ -74,9 +56,6 @@ public class Projectile : MonoBehaviour
         transform.position = newPos;
     }
 
-    // ─────────────────────────────────────────────
-    //  Collision
-    // ─────────────────────────────────────────────
     void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Player"))
@@ -86,7 +65,6 @@ public class Projectile : MonoBehaviour
             Destroy(gameObject);
         }
 
-        // Destroyed by walls / arena bounds
         if (other.CompareTag("Wall"))
             Destroy(gameObject);
     }

@@ -1,15 +1,7 @@
 using UnityEngine;
 
-/// <summary>
-/// Drop this on any GameObject to trigger the TARGET boss dialogue.
-/// Calls DialogueSystem.instance — make sure that's in the scene.
-///
-/// For BITROOT: call TriggerPreFight() when the player enters the final room,
-/// and TriggerPostFight() from your combat system when the boss HP hits 0.
-/// </summary>
 public class BossDialogueTrigger : MonoBehaviour
 {
-    // ── Pre-fight ──────────────────────────────────────────────────────────
     public void TriggerPreFight()
     {
         DialogueLine[] lines = new DialogueLine[]
@@ -88,11 +80,8 @@ public class BossDialogueTrigger : MonoBehaviour
 
     void OnPreFightDone()
     {
-        // Hook into your combat system here
-        // e.g.: BossController.instance.StartFight();
-        Debug.Log("[BITROOT] Pre-fight dialogue done. Start boss fight.");
+        Debug.Log("[BITROOT] Pre fight dialogue done. Start boss fight.");
     }
-    // ── Post-fight ─────────────────────────────────────────────────────────
     public void TriggerPostFight()
     {
         DialogueLine[] lines = new DialogueLine[]
@@ -114,7 +103,7 @@ public class BossDialogueTrigger : MonoBehaviour
             },
             new DialogueLine
             {
-                text      = "You called it determination.\nYou called it survival.",
+                text      = "You called it defence.\nYou called it survival.",
                 charDelay = 0.045f
             },
             new DialogueLine
@@ -129,12 +118,11 @@ public class BossDialogueTrigger : MonoBehaviour
             },
             new DialogueLine
             {
-                text      = "It wasn't determination.",
+                text      = "It wasn't survival.",
                 charDelay = 0.055f
             },
             new DialogueLine
             {
-                // The line. Slow it down.
                 text      = "It was hunger.",
                 charDelay = 0.09f
             },
@@ -166,9 +154,6 @@ public class BossDialogueTrigger : MonoBehaviour
 
     void OnPostFightDone()
     {
-        // Trigger red eyes on player sprite, then begin unzoom sequence
-        // e.g.: PlayerController.instance.TriggerRedEyes();
-        //       EndingCutsceneDirector.instance.BeginUnzoom();
-        Debug.Log("[BITROOT] Post-fight done. Trigger red eyes → unzoom.");
+        Debug.Log("[BITROOT] Post fight done. Trigger red eyes + unzoom.");
     }
 }

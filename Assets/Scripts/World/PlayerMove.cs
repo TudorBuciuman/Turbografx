@@ -10,7 +10,7 @@ public class PlayerMove : MonoBehaviour
     [Header("Running")]
     public bool Running_allowed = true;
     private float runSpeedMultiplier = 2.2f;
-    private bool isRunning = false; // Tracks the toggle state
+    private bool isRunning = false; 
 
     private CharacterController controller;
     private Vector3 velocity;
@@ -31,7 +31,6 @@ public class PlayerMove : MonoBehaviour
 
     void Update()
     {
-        // 1. Reset downward velocity if already grounded
         if (controller.isGrounded && velocity.y < 0f)
         {
             velocity.y = -5f;
@@ -41,11 +40,9 @@ public class PlayerMove : MonoBehaviour
 
         if (canMove)
         {
-            // 2. Gather WASD / Arrow Keys Input
             float x = Input.GetAxis("Horizontal");
             float z = Input.GetAxis("Vertical");
 
-            // Check if player is holding/pressing any movement keys
             bool isMovingInput = Mathf.Abs(x) > 0.01f || Mathf.Abs(z) > 0.01f;
 
             if (Running_allowed && isMovingInput)
@@ -57,39 +54,28 @@ public class PlayerMove : MonoBehaviour
             }
             else
             {
-                // Cancel sprint automatically if the player completely stops moving
                 isRunning = false;
             }
 
             float currentSpeed = moveSpeed * (isRunning ? runSpeedMultiplier : 1f);
 
-            // Combine directional move vector
             move = (transform.right * x + transform.forward * z) * currentSpeed;
 
-            // 3. Jumping Calculations
             if (Running_allowed && Input.GetKeyDown(KeyCode.Space) && controller.isGrounded)
             {
                 velocity.y = Mathf.Sqrt(jumpHeight * -2f * Physics.gravity.y);
-
-                // Optional Cyberpunk behavior: Un-comment the line below 
-                // if you want jumping to cancel the sprint toggle.
-                // isRunning = false; 
             }
         }
         else
         {
-            // Force sprint off if player movement is disabled globally
             isRunning = false;
         }
 
-        // 4. Apply Gravity over time
         velocity.y += Physics.gravity.y * Time.deltaTime * 10f;
 
-        // 5. COMBINED MOVE CALL
         Vector3 finalMovement = (move + velocity) * Time.deltaTime;
         controller.Move(finalMovement);
 
-        // 6. Track actual velocity values
         Vector3 delta = transform.position - lastPosition;
         delta.y = 0f;
         ActualHorizontalVelocity = delta / Time.deltaTime;

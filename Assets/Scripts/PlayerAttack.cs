@@ -8,7 +8,7 @@ public class PlayerAttack : MonoBehaviour
     private byte swordIndex = 1;
     public LayerMask enemyLayer;
 
-    public Transform attackPoint; // empty object in front of player
+    public Transform attackPoint; 
     public AudioSource audioSource;
 
     private float attackCooldown = 0.4f;
@@ -17,6 +17,8 @@ public class PlayerAttack : MonoBehaviour
     private PlayerStats stats;
 
     private Vector2 lastDirection;
+    public float AttackSize = 0.7f;
+
     void Start()
     {
         stats = GetComponent<PlayerStats>();
@@ -32,7 +34,9 @@ public class PlayerAttack : MonoBehaviour
 
     public void TryAttack()
     {
-        if (Time.time < lastAttackTime + attackCooldown)
+        float speed = Mathf.Lerp(1, 1.4f, PlayerStats.level / 5);
+
+        if (Time.time < lastAttackTime + attackCooldown/speed)
             return;
 
         if (FindFirstObjectByType<PlayerMovement>().canMove)
@@ -60,6 +64,7 @@ public class PlayerAttack : MonoBehaviour
         if (swordIndex > 3)
             swordIndex = 1;
         a.anim.Play("attack_" + dir);
+        a.anim.speed = Mathf.Lerp(1,1.4f,PlayerStats.level/5);
         StartCoroutine(AttackDelay());
     }
     public IEnumerator AttackDelay()
@@ -67,11 +72,13 @@ public class PlayerAttack : MonoBehaviour
         PlayerMovement a = FindFirstObjectByType<PlayerMovement>();
         a.MovementToZero();
         float t = 0;
-        while (t < 0.4f)
+        float speed = Mathf.Lerp(1, 1.4f, PlayerStats.level / 5);
+        while (t < (0.4f)/speed)
         {
             t += Time.deltaTime;
             yield return null;
         }
+        if(a.canAttack)
         a.canMove = true;
         yield return null;
     }
@@ -113,7 +120,7 @@ public class PlayerAttack : MonoBehaviour
     }
     public Collider2D[] GetDirectionalHits(Vector2 direction)
     {
-        Vector2 size = new Vector2(0.7f, 0.7f); 
+        Vector2 size = new Vector2(AttackSize, AttackSize); 
         Vector2 offset = direction * 0.65f;      
 
         Vector2 center = (Vector2)transform.position + offset;

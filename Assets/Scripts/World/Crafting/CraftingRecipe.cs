@@ -21,10 +21,7 @@ namespace BITROOT.Crafting
         public int resultAmount = 1;
         public List<CraftingIngredient> ingredients = new List<CraftingIngredient>();
 
-        [Tooltip("Seconds the crafting bench/UI takes to complete this craft, 0 = instant.")]
         public float craftTime = 0f;
-
-        [Tooltip("Optional: gate this recipe behind a story flag or player level.")]
         public bool isUnlockedByDefault = true;
     }
 }
