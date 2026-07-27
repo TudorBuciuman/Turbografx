@@ -6,7 +6,7 @@ public class CRTGlitch : MonoBehaviour
 {
     public Material crtMaterial;
     private int tme = 0;
-    private bool botForInfoeducatie = true;
+    private bool botForInfoeducatie = false;
 
     private void Start()
     {
@@ -19,6 +19,11 @@ public class CRTGlitch : MonoBehaviour
         {
             tme = -600;
             TriggerGlitch();
+        }
+        if(UTInput.GetButtonDown("C"))
+        {
+            FindFirstObjectByType<GameManager>().StoppingMusic(3);
+            SceneManager.LoadScene(4);
         }
     }
     public void TriggerGlitch()

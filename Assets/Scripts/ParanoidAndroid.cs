@@ -165,12 +165,13 @@ public class ParanoidAndroid : MonoBehaviour
 
     void Update()
     {
-        if (SceneManager.GetActiveScene().name == "Bunker2")
-            RestartWholeGame();
-
         if (!botActive || playerMovement == null || !isReady) return;
 
         playerMovement.autoDemoMode = true;
+
+
+        if (SceneManager.GetActiveScene().name == "Bunker2")
+            RestartWholeGame();
 
         if (!playerMovement.canMove)
         {

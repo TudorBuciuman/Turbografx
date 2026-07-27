@@ -17,7 +17,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/BITROOT/Bunker2.unity
     guid: 4da8790f70c06e34ea46bd10ad503d43
-  - enabled: 0
+  - enabled: 1
     path: Assets/Scenes/Turbografx/City.unity
     guid: 7040d6bcd55506041bed97095ed9de53
   m_configObjects: {}

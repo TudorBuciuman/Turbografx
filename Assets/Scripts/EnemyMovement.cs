@@ -43,6 +43,10 @@ public class EnemyMovement : MonoBehaviour
         {
             DarkEnemy();
         }
+        else if(animState == 4)
+        {
+            Anim4();
+        }
     }
 
     void Update()
@@ -121,6 +125,10 @@ public class EnemyMovement : MonoBehaviour
     public void DarkEnemy()
     {
         this.GetComponent<Animator>().Play("enemy3");
+    }
+    public void Anim4()
+    {
+        this.GetComponent<Animator>().Play("enemy4");
     }
     void ReturnToStart()
     {

@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.XR;
 
 [RequireComponent(typeof(AudioSource))]
 public class GameManager : MonoBehaviour
@@ -47,13 +46,20 @@ public class GameManager : MonoBehaviour
         audio.clip = newClip;
         audio.Play();
     }
+    public void StoppingMusic(float d)
+    {
+        StartCoroutine(StopMusic(d));
+    }
     public void ChangeMusic(string song)
     {
         StartCoroutine(ChangeMusicCoroutine(song, 2));
     }
     private IEnumerator ChangeMusicCoroutine(string song, float duration)
     {
-        AudioSource audio = GetComponent<AudioSource>();
+        //durata este timpul in care scade treptat volumul
+        //totodata este si timpul in care noua melodie va avea volumul crescut
+        AudioSource audio = gm.GetComponent<AudioSource>();
+        audio.loop = false;
         float startVolume = audio.volume;
 
         float time = 0f;
@@ -79,6 +85,25 @@ public class GameManager : MonoBehaviour
 
         audio.volume = startVolume;
     }
+    public IEnumerator StopMusic(float duration)
+    {
+        AudioSource audio = gm.GetComponent<AudioSource>();
+        audio.loop = false;
+        float startVolume = audio.volume;
+
+        float time = 0f;
+        while (time < duration)
+        {
+            audio.volume = Mathf.Lerp(startVolume, 0f, time / duration);
+            time += Time.deltaTime;
+            yield return null;
+        }
+
+        audio.volume = 0f;
+        audio.Stop();
+        audio.clip = null;
+        audio.volume = startVolume;
+    }
     public void DisablePlayerMovement()
     {
         if (FindObjectsByType<PlayerMovement>(FindObjectsSortMode.None) != null)
@@ -100,8 +125,45 @@ public class GameManager : MonoBehaviour
     private int currentsc;
     private int zone;
     private bool newSceneFadeIn = false;
-    public void LoadArea(int sceneName, bool fadeIn, Vector2 pos, byte dir)
+    public void LoadArea(int sceneName, bool fadeIn, Vector2 pos, byte dir, int special)
     {
+        GameObject gameObject = GameObject.Find("FadeObj");
+        DisablePlayerMovement();
+        if(special==1)
+        {
+            StartCoroutine(ChangeMusicCoroutine("Music/roots",0.5f));
+        }
+        gameObject.GetComponent<Fade>().FadeOut(90);
+        StartCoroutine(Wait(2.5f,sceneName,fadeIn,pos,dir,special));
+    }
+    private void OnAreaLoaded(Scene ascene, LoadSceneMode aMode)
+    {
+        SceneManager.sceneLoaded -= OnAreaLoaded;
+        SceneManager.SetActiveScene(SceneManager.GetSceneByBuildIndex(zone));
+        SceneManager.UnloadSceneAsync(currentsc);
+
+        GameObject gameObject = GameObject.Find("FadeObj");
+        gameObject.GetComponent<Fade>().FadeIn(90);
+        if ((bool)GameObject.Find("Player"))
+        {
+            if ((bool)GameObject.Find("Player").GetComponent<PlayerMovement>())
+            {
+                GameObject.Find("Player").GetComponent<PlayerMovement>().HandleSpawn(spawnPos, spawnDir);
+            }
+        }
+        //savePointSpawn = false;
+        //PlayMusic(nextOWSong);
+        foreach (CanvasManager a in FindObjectsByType<CanvasManager>(FindObjectsSortMode.None))
+        {
+            a.ChangeCamera();
+            a.GetComponent<Canvas>().worldCamera = GameObject.Find("Main Camera").GetComponent<Camera>();
+        }
+        EnablePlayerMovement();
+    }
+    public IEnumerator Wait(float f, int sceneName, bool fadeIn, Vector2 pos, byte dir, int special)
+    {
+        yield return new WaitForSeconds(f);
+        yield return null;
         currentsc = SceneManager.GetActiveScene().buildIndex;
         SceneManager.LoadScene(sceneName, LoadSceneMode.Additive);
         GameObject.Find("Main Camera").name = "Camera";
@@ -129,32 +191,7 @@ public class GameManager : MonoBehaviour
         }
         newSceneFadeIn = fadeIn;
         SceneManager.sceneLoaded += OnAreaLoaded;
-    }
-    private void OnAreaLoaded(Scene ascene, LoadSceneMode aMode)
-    {
-        SceneManager.sceneLoaded -= OnAreaLoaded;
-        SceneManager.SetActiveScene(SceneManager.GetSceneByBuildIndex(zone));
-        SceneManager.UnloadSceneAsync(currentsc);
-        GameObject gameObject = GameObject.Find("FadeObj");
-        if (newSceneFadeIn)
-        {
-            gameObject.GetComponent<Fade>().FadeIn(30);
-        }
-        if ((bool)GameObject.Find("Player"))
-        {
-            if ((bool)GameObject.Find("Player").GetComponent<PlayerMovement>())
-            {
-                GameObject.Find("Player").GetComponent<PlayerMovement>().HandleSpawn(spawnPos, spawnDir);
-            }
-        }
-        //savePointSpawn = false;
-        //PlayMusic(nextOWSong);
-        foreach (CanvasManager a in FindObjectsByType<CanvasManager>(FindObjectsSortMode.None))
-        {
-            a.ChangeCamera();
-            a.GetComponent<Canvas>().worldCamera = GameObject.Find("Main Camera").GetComponent<Camera>();
-        }
-        EnablePlayerMovement();
+        yield return null;
     }
 
 }

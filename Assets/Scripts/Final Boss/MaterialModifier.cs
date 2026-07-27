@@ -2,21 +2,40 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class MaterialModifier : MonoBehaviour
 {
     public static Material Turbografx;
+    public static Material Turbographics;
     [SerializeField]
     private bool isBleeding = false;
     public const float TransitionTime = 3;
+    private bool tgfxSet = true;
+    private bool canChange = false;
 
     public void Start()
     {
         SetMaterial();
+        if (SceneManager.GetActiveScene().name == "Bunker1")
+            canChange = true;
+        else
+            canChange = false;
+    }
+    public void Update()
+    {
+        if (!canChange) return;
+
+        if (UTInput.GetButtonDown("C"))
+        {
+            ChangeShader();
+        }
     }
     public void SetMaterial()
     {
         Turbografx = Resources.Load<Material>("Material/Turbografx");
+        Turbographics = Resources.Load<Material>("Material/Turbographics");
         SetTurbografx();
         if(isBleeding)
         this.GetComponent<MaterialModifier>().SetBleeding();
@@ -58,5 +77,13 @@ public class MaterialModifier : MonoBehaviour
     {
         if (Turbografx != null)
             SetTurbografx();
+    }
+    public void ChangeShader()
+    {
+        if(!tgfxSet)
+            FindFirstObjectByType<RawImage>().material = Turbografx;
+        else
+            FindFirstObjectByType<RawImage>().material = Turbographics;
+        tgfxSet = !tgfxSet;
     }
 }

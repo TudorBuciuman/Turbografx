@@ -86,10 +86,6 @@ public class Fade : MonoBehaviour
         fadingOut = false;
         isFading = true;
         this.color = color;
-        if (maxFrames == 0f)
-        {
-            Update();
-        }
     }
 
     public void FadeIn(int numFrames)

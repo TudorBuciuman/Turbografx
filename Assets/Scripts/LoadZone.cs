@@ -15,6 +15,9 @@ public class LoadingZone : MonoBehaviour
     private int fadeType;
 
     [SerializeField]
+    private int special;
+
+    [SerializeField]
     private bool fadeMusic;
 
     private bool activated;
@@ -32,7 +35,7 @@ public class LoadingZone : MonoBehaviour
         }
         else
         {
-            FindFirstObjectByType<GameManager>().LoadArea(newScene, fadeIn: true, newPos, face);
+            FindFirstObjectByType<GameManager>().LoadArea(newScene, fadeIn: true, newPos, face, special);
         }
         activated = false;
     }
