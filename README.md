@@ -69,3 +69,15 @@
   <em>https://sketchfab.com/tudor13mai/models</em><br/>
   <em>Here you can find my custom TurboGrafx-16 console I made from scratch.</em><br/>
 </p>
+
+---
+
+<p align="center">
+  <strong>$\LARGE \color{#FFE412}{\textsf{DOCUMENTATION}}$</strong>
+</p>
+<p align="center">
+  <em>The project has gotten really big, so this PDF should help:</em><br/>
+  <em>https://github.com/TudorBuciuman/Turbografx/blob/main/GitHub%20Art/TurboGrafx-16.pdf</em><br/>
+  <em>I know, it's really tiny compared to my whole work.</em><br/>
+</p>
+
